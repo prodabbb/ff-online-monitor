@@ -30,6 +30,7 @@ print("Checking player...")
 print("=" * 50)
 
 status = check_player()
+print(f"Returned status: {status}")
 previous = get_last_status()
 
 if status is True:
