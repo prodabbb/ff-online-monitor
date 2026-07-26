@@ -2,7 +2,7 @@ name: Free Fire Monitor
 
 on:
   schedule:
-  - cron: "*/2 * * * *"
+    - cron: "*/2 * * * *"
 
   workflow_dispatch:
 
@@ -14,27 +14,27 @@ jobs:
 
     steps:
 
-    - name: Checkout
-      uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
 
-    - name: Setup Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: "3.12"
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
 
 
-    - name: Install dependencies
-      run: |
-        pip install -r requirements.txt
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
 
 
-    - name: Run monitor
-      env:
-        FIREBASE_KEY: ${{ secrets.FIREBASE_KEY }}
-        BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
-        CHAT_ID: ${{ secrets.CHAT_ID }}
-        UID: ${{ secrets.UID }}
+      - name: Run monitor
+        env:
+          FIREBASE_KEY: ${{ secrets.FIREBASE_KEY }}
+          BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+          CHAT_ID: ${{ secrets.CHAT_ID }}
+          UID: ${{ secrets.UID }}
 
-      run: |
-        python monitor.py
+        run: |
+          python monitor.py
