@@ -29,8 +29,9 @@ print(f"UID    : {UID}")
 print("Checking player...")
 print("=" * 50)
 
-status = check_player()
-print(f"Returned status: {status}")
+status = check_player(UID)
+print("DEBUG STATUS:", status)
+
 previous = get_last_status()
 
 if status is True:
