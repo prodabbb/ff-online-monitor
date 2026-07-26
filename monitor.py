@@ -1,13 +1,14 @@
 from checker import check_player
 from notifier import send_message
 from config import UID
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
 
 STATUS_FILE = "status.txt"
 
 
 def now():
-    return datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    ist = timezone(timedelta(hours=5, minutes=30))
+    return datetime.now(ist).strftime("%Y-%m-%d %H:%M:%S")
 
 
 def get_last_status():
