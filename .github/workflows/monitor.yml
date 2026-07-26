@@ -38,7 +38,3 @@ jobs:
 
         run: |
           python monitor.py
-
-                - name: Test schedule
-        run: |
-          echo "Scheduled run started"
