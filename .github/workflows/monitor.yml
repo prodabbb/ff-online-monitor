@@ -29,4 +29,5 @@ jobs:
           UID: ${{ secrets.UID }}
           BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
           CHAT_ID: ${{ secrets.CHAT_ID }}
+          FIREBASE_KEY: ${{ secrets.FIREBASE_KEY }}
         run: python monitor.py
