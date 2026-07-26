@@ -1,6 +1,6 @@
 name: Free Fire Monitor
 
-on:
+'on':
   schedule:
     - cron: "*/2 * * * *"
 
