@@ -10,16 +10,9 @@ if not firebase_admin._apps:
     firebase_json = os.getenv("FIREBASE_KEY")
 
     if firebase_json:
-        # GitHub Actions
-        cred = credentials.Certificate(
-            json.loads(firebase_json)
-        )
-
+        cred = credentials.Certificate(json.loads(firebase_json))
     else:
-        # Local PC
-        cred = credentials.Certificate(
-            "firebase_key.json"
-        )
+        cred = credentials.Certificate("firebase_key.json")
 
     firebase_admin.initialize_app(cred)
 
@@ -37,11 +30,15 @@ def get_player(uid):
 
 
 def save_player(uid, data):
-    db.collection("players").document(uid).set(data)
+    db.collection("players").document(uid).set(
+        data,
+        merge=True
+    )
 
 
 def add_history(uid, event):
-    db.collection("players").document(uid).collection("history").add({
+    db.collection("players").document(uid)\
+    .collection("history").add({
         "event": event,
         "time": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     })

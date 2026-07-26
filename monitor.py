@@ -10,88 +10,206 @@ def now():
     return datetime.now(ist).strftime("%Y-%m-%d %H:%M:%S")
 
 
+def time_diff(start, end):
+    if not start:
+        return 0
+
+    fmt = "%Y-%m-%d %H:%M:%S"
+
+    try:
+        start_time = datetime.strptime(start, fmt)
+        end_time = datetime.strptime(end, fmt)
+
+        return int((end_time - start_time).total_seconds())
+
+    except Exception as e:
+        print("Time calculation error:", e)
+        return 0
+
+
+
 print("=" * 50)
-print(f"Time   : {now()}")
-print(f"UID    : {UID}")
+print(f"Time : {now()}")
+print(f"UID  : {UID}")
 print("Checking player...")
 print("=" * 50)
+
 
 
 status = check_player(UID)
 
 print("DEBUG STATUS:", status)
 
-# Get previous status from Firebase
-player_data = get_player(UID)
 
-if player_data:
-    previous = player_data.get("status")
+
+player = get_player(UID)
+
+
+if player:
+    previous = player.get("status", "offline")
 else:
     previous = "offline"
 
 
-# PLAYER ONLINE
+
+# ==========================
+# ONLINE
+# ==========================
+
 if status is True:
 
     print("Status : ONLINE")
 
+
     if previous != "online":
 
-        print("Sending Telegram notification...")
+        old_sessions = 0
+
+        if player:
+            old_sessions = player.get(
+                "total_sessions",
+                0
+            )
+
+
+        new_session = old_sessions + 1
+
 
         send_message(
-            f"""🟢 FREE FIRE ALERT
+f"""🟢 FREE FIRE ALERT
 
 Player: {UID}
 
 Status: ONLINE ✅
 
-Time: {now()}
+Time:
+{now()}
+
+Session:
+{new_session}
 """
         )
 
-        add_history(UID, "online")
 
-    save_player(UID, {
-        "uid": UID,
-        "status": "online",
-        "last_seen": now()
-    })
+        add_history(
+            UID,
+            "online"
+        )
 
 
-# PLAYER OFFLINE
+        save_player(
+            UID,
+            {
+                "uid": UID,
+                "status": "online",
+                "online_since": now(),
+                "offline_since": "",
+                "last_checked": now(),
+                "total_sessions": new_session
+            }
+        )
+
+
+    else:
+
+        # Already online, update only check time
+
+        save_player(
+            UID,
+            {
+                "last_checked": now()
+            }
+        )
+
+
+
+
+# ==========================
+# OFFLINE
+# ==========================
+
 elif status is False:
 
     print("Status : OFFLINE")
 
+
+    old_total = 0
+    played_seconds = 0
+    sessions = 0
+
+
+    if player:
+
+        sessions = player.get(
+            "total_sessions",
+            0
+        )
+
+
+        old_total = player.get(
+            "total_online_seconds",
+            0
+        )
+
+
+        if previous == "online":
+
+            played_seconds = time_diff(
+                player.get("online_since"),
+                now()
+            )
+
+
+    new_total = old_total + played_seconds
+
+
+
     if previous == "online":
 
-        print("Sending offline notification...")
+        minutes = played_seconds // 60
+
 
         send_message(
-            f"""🔴 FREE FIRE ALERT
+f"""🔴 FREE FIRE ALERT
 
 Player: {UID}
 
 Status: OFFLINE ❌
 
-Time: {now()}
+Played this session:
+{minutes} minutes
+
+Time:
+{now()}
 """
         )
 
-        add_history(UID, "offline")
+
+        add_history(
+            UID,
+            "offline"
+        )
 
 
-    save_player(UID, {
-        "uid": UID,
-        "status": "offline",
-        "last_seen": now()
-    })
+
+    save_player(
+        UID,
+        {
+            "uid": UID,
+            "status": "offline",
+            "offline_since": now(),
+            "last_checked": now(),
+            "total_sessions": sessions,
+            "total_online_seconds": new_total
+        }
+    )
 
 
-# UNKNOWN
+
 else:
+
     print("Status : UNKNOWN")
+
 
 
 print("=" * 50)
