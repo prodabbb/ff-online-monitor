@@ -3,7 +3,7 @@ name: Free Fire Monitor
 on:
   workflow_dispatch:
   schedule:
-    - cron: "*/5 * * * *"   # Every 5 minutes
+    - cron: "* * * * *"   # Every minute
 
 jobs:
   monitor:
