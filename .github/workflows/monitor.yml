@@ -2,7 +2,7 @@ name: Free Fire Monitor
 
 on:
   schedule:
-    - cron: "* * * * *"
+  - cron: "*/2 * * * *"
 
   workflow_dispatch:
 
